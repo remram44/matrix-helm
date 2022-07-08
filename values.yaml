@@ -14,18 +14,27 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+server_name: matrix.example.org
+
+# Send statistics about Synapse
+report_stats: false
+
+storage:
+  storage_class: standard
+  capacity: 10Gi
+
 podAnnotations: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext:
+  fsGroup: 2000
 
-securityContext: {}
+securityContext:
   # capabilities:
   #   drop:
   #   - ALL
   # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+  runAsNonRoot: true
+  runAsUser: 991
 
 service:
   type: ClusterIP
@@ -64,3 +73,11 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+postgres:
+  user:
+    name: matrix
+    password:
+      secret_name: null # Generate a secret
+      secret_key: password
+

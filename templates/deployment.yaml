@@ -6,6 +6,8 @@ metadata:
     {{- include "matrix.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       {{- include "matrix.selectorLabels" . | nindent 6 }}
@@ -24,16 +26,68 @@ spec:
       {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: setup
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default (printf "v%s" .Chart.AppVersion) }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - |
+              if [ ! -e /data/homeserver.yaml ]; then
+                # Generate keys and default configuration
+                /start.py generate
+              fi
+          env:
+            - name: SYNAPSE_SERVER_NAME
+              value: "{{ .Values.server_name }}"
+            - name: SYNAPSE_REPORT_STATS
+              value: {{ if .Values.report_stats }}"yes"{{ else }}"no"{{ end }}
+          volumeMounts:
+            - mountPath: /data
+              name: data
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default (printf "v%s" .Chart.AppVersion) }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - |
+              printf 'import os, yaml;\nos.umask(0o077)\nwith open("/tmp/synapse.yaml", "w") as fp:\n  yaml.dump({"database": {"name": "psycopg2", "args": {"user": os.environ["PG_USER"], "password": os.environ["PG_PASSWORD"], "database": os.environ["PG_DB"], "host": os.environ["PG_HOST"], "cp_min": 5, "cp_max": 10}}}, fp)\n' | python -
+
+              printf '# rr4: homeserver.yaml:\n'
+              cat /data/homeserver.yaml
+              printf '\n\n'
+              printf '# rr4: synapse.yaml:\n'
+              cat /tmp/synapse.yaml
+              printf '\n\n'
+
+              # Run synapse
+              exec python -m synapse.app.homeserver --config-path /data/homeserver.yaml --config-path /tmp/synapse.yaml
+          env:
+            - name: PG_USER
+              value: "{{ .Values.postgres.user.name }}"
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ default (include "postgres.fullname" .Subcharts.postgres) .Values.postgres.user.password.secret_name }}"
+                  key: "{{ .Values.postgres.user.password.secret_key }}"
+            - name: PG_DB
+              value: "{{ .Values.postgres.database }}"
+            - name: PG_HOST
+              value: "{{ include "postgres.fullname" .Subcharts.postgres }}"
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 8008
               protocol: TCP
+          volumeMounts:
+            - mountPath: /data
+              name: data
           livenessProbe:
             httpGet:
               path: /
@@ -44,6 +98,10 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "matrix.fullname" . }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
