@@ -1,0 +1,10 @@
+apiVersion: v2
+name: matrix
+description: A chart for Matrix.org, includes Synapse, PostgreSQL, and Element.
+
+type: application
+
+version: 0.1.0
+
+# The version of Synapse
+appVersion: "1.62.0"

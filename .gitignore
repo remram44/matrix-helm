@@ -1,0 +1,18 @@
+/*.values.yml
+/*.values.yaml
+
+# ViM
+.*.swp
+
+# Emacs
+\#*#
+
+# OS files
+.DS_Store
+desktop.ini
+
+# Archives
+*.tar
+*.tar.gz
+*.tar.bz2
+*.zip
