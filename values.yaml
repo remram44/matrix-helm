@@ -80,4 +80,4 @@ postgres:
     password:
       secret_name: null # Generate a secret
       secret_key: password
-
+  default_collation: C

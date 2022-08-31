@@ -42,6 +42,12 @@ spec:
                 secretKeyRef:
                   name: "{{ default (include "postgres.fullname" .) .Values.user.password.secret_name }}"
                   key: "{{ .Values.user.password.secret_key }}"
+            - name: LC_COLLATE
+              value: "{{ .Values.default_collation }}"
+            - name: LC_CTYPE
+              value: "{{ .Values.default_collation }}"
+            - name: POSTGRES_INITDB_ARGS
+              value: "--encoding={{ .Values.character_encoding }}"
           ports:
             - name: postgres
               containerPort: 5432

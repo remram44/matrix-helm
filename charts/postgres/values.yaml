@@ -22,6 +22,9 @@ user:
 
 database: matrix
 
+default_collation: en_US.UTF-8
+characted_encoding: UTF8
+
 storage:
   storage_class: standard
   capacity: 100Gi
