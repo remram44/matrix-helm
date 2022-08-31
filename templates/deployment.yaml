@@ -58,7 +58,7 @@ spec:
             - sh
             - -c
             - |
-              printf 'import os, yaml;\nos.umask(0o077)\nwith open("/data/homeserver.yaml") as fp:\n  config = yaml.safe_load(fp)\nconfig["database"] = {"name": "psycopg2", "args": {"user": os.environ["PG_USER"], "password": os.environ["PG_PASSWORD"], "database": os.environ["PG_DB"], "host": os.environ["PG_HOST"], "cp_min": 5, "cp_max": 10}}\nwith open("/tmp/synapse.yaml", "w") as fp:\n  yaml.dump(config, fp)\n' | python -
+              printf 'import os, yaml;\nos.umask(0o077)\nwith open("/data/homeserver.yaml") as fp:\n  config = yaml.safe_load(fp)\nconfig["database"] = {"name": "psycopg2", "args": {"user": os.environ["PG_USER"], "password": os.environ["PG_PASSWORD"], "database": os.environ["PG_DB"], "host": os.environ["PG_HOST"], "cp_min": 5, "cp_max": 10}}\nconfig["serve_server_wellknown"] = True\nwith open("/tmp/synapse.yaml", "w") as fp:\n  yaml.dump(config, fp)\n' | python -
 
               printf '# rr4: synapse.yaml:\n'
               cat /tmp/synapse.yaml
