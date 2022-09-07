@@ -91,11 +91,13 @@ spec:
               port: http
             initialDelaySeconds: 300
             periodSeconds: 15
+            failureThreshold: 4
           readinessProbe:
             httpGet:
               path: /health
               port: http
             periodSeconds: 15
+            failureThreshold: 4
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
