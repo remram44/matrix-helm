@@ -6,6 +6,8 @@ metadata:
     {{- include "postgres.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       {{- include "postgres.selectorLabels" . | nindent 6 }}
