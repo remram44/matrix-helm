@@ -23,7 +23,7 @@ user:
 database: matrix
 
 default_collation: en_US.UTF-8
-characted_encoding: UTF8
+character_encoding: UTF8
 
 storage:
   storage_class: standard
