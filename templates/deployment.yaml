@@ -44,7 +44,7 @@ spec:
             - name: SYNAPSE_SERVER_NAME
               value: "{{ .Values.server_name }}"
             - name: SYNAPSE_REPORT_STATS
-              value: {{ if .Values.report_stats }}"yes"{{ else }}"no"{{ end }}
+              value: "no"
           volumeMounts:
             - mountPath: /data
               name: data
@@ -58,15 +58,38 @@ spec:
             - sh
             - -c
             - |
-              printf 'import os, yaml;\nos.umask(0o077)\nwith open("/data/homeserver.yaml") as fp:\n  config = yaml.safe_load(fp)\nconfig["database"] = {"name": "psycopg2", "args": {"user": os.environ["PG_USER"], "password": os.environ["PG_PASSWORD"], "database": os.environ["PG_DB"], "host": os.environ["PG_HOST"], "cp_min": 5, "cp_max": 10}}\nconfig["serve_server_wellknown"] = True\nwith open("/tmp/synapse.yaml", "w") as fp:\n  yaml.dump(config, fp)\n' | python -
-
-              printf '# rr4: synapse.yaml:\n'
-              cat /tmp/synapse.yaml
-              printf '\n\n'
+              printf '%s' "$1" | python -
 
               # Run synapse
               exec python -m synapse.app.homeserver --config-path /tmp/synapse.yaml
+            - "--"
+            - |
+              import os
+              import yaml
+
+              os.umask(0o077)
+              with open("/data/homeserver.yaml") as fp:
+                  config = yaml.safe_load(fp)
+
+              config["database"] = {
+                  "name": "psycopg2",
+                  "args": {
+                      "user": os.environ["PG_USER"],
+                      "password": os.environ["PG_PASSWORD"],
+                      "database": os.environ["PG_DB"],
+                      "host": os.environ["PG_HOST"],
+                      "cp_min": 5,
+                      "cp_max": 10,
+                  },
+              }
+              config["serve_server_wellknown"] = True
+              config["report_stats"] = os.environ.get("SYNAPSE_REPORT_STATS", "").lower() in ("yes", "true", "1")
+
+              with open("/tmp/synapse.yaml", "w") as fp:
+                  yaml.dump(config, fp)
           env:
+            - name: SYNAPSE_REPORT_STATS
+              value: {{ if .Values.report_stats }}"yes"{{ else }}"no"{{ end }}
             - name: PG_USER
               value: "{{ .Values.postgres.user.name }}"
             - name: PG_PASSWORD
