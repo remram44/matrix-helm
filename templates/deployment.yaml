@@ -83,6 +83,12 @@ spec:
                   },
               }
               config["serve_server_wellknown"] = True
+              {{- if .Values.element.ingress.enabled }}
+              config["web_client_location"] = "http{{ if .Values.element.ingress.tls }}s{{ end }}://{{ .Values.element.ingress.host }}/"
+              {{- end }}
+              {{- if .Values.ingress.enabled }}
+              config["public_baseurl"] = "http{{ if .Values.ingress.tls }}s{{ end }}://{{ index .Values.ingress.hosts 0 }}/"
+              {{- end }}
               config["report_stats"] = os.environ.get("SYNAPSE_REPORT_STATS", "").lower() in ("yes", "true", "1")
 
               with open("/tmp/synapse.yaml", "w") as fp:
