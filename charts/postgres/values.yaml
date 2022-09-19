@@ -25,7 +25,10 @@ default_collation: en_US.UTF-8
 character_encoding: UTF8
 
 storage:
-  storage_class: standard
+  create: true
+  # Override the persistentvolumeclaim's name whose default is the release name
+  persistentClaimName: ""
+  storageClass: ""
   capacity: 100Gi
 
 podAnnotations: {}

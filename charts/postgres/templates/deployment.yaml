@@ -62,7 +62,7 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: {{ include "postgres.fullname" . }}
+            claimName: "{{ .Values.storage.persistentClaimName | default (include "postgres.fullname" .) }}"
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
