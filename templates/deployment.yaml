@@ -97,12 +97,12 @@ spec:
             - name: SYNAPSE_REPORT_STATS
               value: {{ if .Values.report_stats }}"yes"{{ else }}"no"{{ end }}
             - name: PG_USER
-              value: "{{ .Values.postgres.user.name }}"
+              value: "{{ .Values.postgres.user }}"
             - name: PG_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: "{{ default (include "postgres.fullname" .Subcharts.postgres) .Values.postgres.user.password.secret_name }}"
-                  key: "{{ .Values.postgres.user.password.secret_key }}"
+                  name: "{{ default (include "postgres.fullname" .Subcharts.postgres) .Values.postgres.secret.name }}"
+                  key: postgres_password
             - name: PG_DB
               value: "{{ .Values.postgres.database }}"
             - name: PG_HOST

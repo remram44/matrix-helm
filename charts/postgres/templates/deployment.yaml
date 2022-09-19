@@ -38,12 +38,12 @@ spec:
             - name: POSTGRES_DB
               value: "{{ .Values.database }}"
             - name: POSTGRES_USER
-              value: "{{ .Values.user.name }}"
+              value: "{{ .Values.user }}"
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: "{{ default (include "postgres.fullname" .) .Values.user.password.secret_name }}"
-                  key: "{{ .Values.user.password.secret_key }}"
+                  name: "{{ .Values.secret.name | default (include "postgres.fullname" .) }}"
+                  key: postgres_password
             - name: LC_COLLATE
               value: "{{ .Values.default_collation }}"
             - name: LC_CTYPE

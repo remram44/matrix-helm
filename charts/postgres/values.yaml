@@ -12,11 +12,12 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-user:
-  name: matrix
-  password:
-    secret_name: null # Generate a secret
-    secret_key: password
+user: "pguser"
+
+secret:
+  create: true
+  # Override the secret's name whose default is the release name
+  name: ""
 
 database: matrix
 

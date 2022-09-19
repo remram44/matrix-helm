@@ -72,9 +72,5 @@ tolerations: []
 affinity: {}
 
 postgres:
-  user:
-    name: matrix
-    password:
-      secret_name: null # Generate a secret
-      secret_key: password
+  user: matrix
   default_collation: C
