@@ -20,7 +20,10 @@ server_name: matrix.example.org
 report_stats: false
 
 storage:
-  storage_class: standard
+  create: true
+  # Override the persistentvolumeclaim's name whose default is the release name
+  persistentClaimName: ""
+  storageClass: ""
   capacity: 10Gi
 
 podAnnotations: {}

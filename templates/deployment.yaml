@@ -132,7 +132,7 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: {{ include "matrix.fullname" . }}
+            claimName: "{{ .Values.storage.persistentClaimName | default (include "matrix.fullname" .) }}"
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

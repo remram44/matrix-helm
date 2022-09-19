@@ -1,13 +1,15 @@
+{{- if .Values.storage.create }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "matrix.fullname" . }}
+  name: "{{ .Values.storage.persistentClaimName | default (include "matrix.fullname" .) }}"
   labels:
     {{- include "matrix.labels" . | nindent 4 }}
 spec:
-  storageClassName: {{ .Values.storage.storage_class }}
+  storageClassName: {{ .Values.storage.storageClass | quote }}
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: {{ .Values.storage.capacity }}
+{{- end }}
