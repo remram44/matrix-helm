@@ -52,6 +52,9 @@ cat > /usr/lib/element/config.json <<END
     "jitsi": {
         "preferred_domain": "meet.element.io"
     },
+    "element_call": {
+        "url": "https://call.element.io"
+    },
     "map_style_url": "https://api.maptiler.com/maps/streets/style.json?key=fU3vlMsMn4Jb6dnEIFsx"
 }
 END
