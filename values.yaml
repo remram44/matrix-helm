@@ -96,5 +96,6 @@ tolerations: []
 affinity: {}
 
 postgres:
+  enabled: true
   user: matrix
   default_collation: C
