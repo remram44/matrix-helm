@@ -16,6 +16,7 @@ fullnameOverride: ""
 
 server_name: matrix.example.org
 server_public_url: https://synapse.matrix.example.org/
+app_name: "Example Matrix"
 # Default to Element's ingress, if enabled
 web_client_location: ""
 # web_client_location: https://element.matrix.example.org/
@@ -28,6 +29,16 @@ enable_registration: false
 enable_registration_without_verification: false
 
 auto_join_rooms: []
+
+email:
+  enabled: false
+  from: "Example Matrix <matrix-support@example.org>"
+  host: "smtp.example.org"
+  port: 25
+  user: ""
+  secret:
+    name: ""
+    key: "password"
 
 storage:
   create: true

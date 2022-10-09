@@ -96,6 +96,20 @@ spec:
                 {{- end }}
               ]
               {{- end }}
+              {{- if .Values.email.enabled }}
+              config["email"] = {
+                  "smtp_host": "{{ .Values.email.host }}",
+                  "smtp_port": {{ .Values.email.port }},
+                  {{- if .Values.email.user }}
+                  "smtp_user": "{{ .Values.email.user }}",
+                  "smtp_pass": os.environ["SMTP_PASSWORD"],
+                  {{- end }}
+                  "app_name": {{ .Values.app_name | quote }},
+                  "enable_notifs": True,
+                  "client_base_url": config["web_client_location"],
+                  "notif_from": {{ .Values.email.from | quote }},
+              }
+              {{- end }}
               config["report_stats"] = os.environ.get("SYNAPSE_REPORT_STATS", "").lower() in ("yes", "true", "1")
 
               with open("/tmp/synapse.yaml", "w") as fp:
@@ -114,6 +128,13 @@ spec:
               value: "{{ .Values.postgres.database }}"
             - name: PG_HOST
               value: "{{ include "postgres.fullname" .Subcharts.postgres }}"
+            {{- if and .Values.email.enabled .Values.email.user }}
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.email.secret.name | quote }}
+                  key: {{ .Values.email.secret.key | quote }}
+            {{- end }}
           ports:
             - name: http
               containerPort: 8008
