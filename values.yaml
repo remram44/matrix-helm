@@ -15,6 +15,10 @@ nameOverride: ""
 fullnameOverride: ""
 
 server_name: matrix.example.org
+server_public_url: https://synapse.matrix.example.org/
+# Default to Element's ingress, if enabled
+web_client_location: ""
+# web_client_location: https://element.matrix.example.org/
 
 # Send statistics about Synapse
 report_stats: false
