@@ -23,6 +23,12 @@ web_client_location: ""
 # Send statistics about Synapse
 report_stats: false
 
+# Registration
+enable_registration: false
+enable_registration_without_verification: false
+
+auto_join_rooms: []
+
 storage:
   create: true
   # Override the persistentvolumeclaim's name whose default is the release name

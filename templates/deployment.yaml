@@ -87,6 +87,15 @@ spec:
               config["web_client_location"] = "{{ include "matrix.webClientLocation" . }}"
               {{- end }}
               config["public_baseurl"] = {{ .Values.server_public_url | quote }}
+              config["enable_registration"] = {{ if .Values.enable_registration }}True{{ else }}False{{ end }}
+              config["enable_registration_without_verification"] = {{ if .Values.enable_registration_without_verification }}True{{ else }}False{{ end }}
+              {{- if .Values.auto_join_rooms }}
+              config["auto_join_rooms"] = [
+                {{- range .Values.auto_join_rooms }}
+                "{{ . }}",
+                {{- end }}
+              ]
+              {{- end }}
               config["report_stats"] = os.environ.get("SYNAPSE_REPORT_STATS", "").lower() in ("yes", "true", "1")
 
               with open("/tmp/synapse.yaml", "w") as fp:
