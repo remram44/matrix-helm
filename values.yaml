@@ -21,6 +21,10 @@ app_name: "Example Matrix"
 web_client_location: ""
 # web_client_location: https://element.matrix.example.org/
 
+metrics:
+  enable: false
+  port: 8080
+
 # Send statistics about Synapse
 report_stats: false
 

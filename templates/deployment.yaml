@@ -88,6 +88,19 @@ spec:
               {{- end }}
               config["public_baseurl"] = {{ .Values.server_public_url | quote }}
               config["enable_registration"] = {{ if .Values.enable_registration }}True{{ else }}False{{ end }}
+              {{- if .Values.metrics.enable }}
+              config["enable_metrics"] = True
+              config["listeners"].append({
+                "port": {{ .Values.metrics.port }},
+                "tls": False,
+                "type": "http",
+                "x_forwarded": False,
+                "resources": [{
+                  "names": ["metrics"],
+                  "compress": False,
+                }],
+              })
+              {{- end  }}
               config["enable_registration_without_verification"] = {{ if .Values.enable_registration_without_verification }}True{{ else }}False{{ end }}
               {{- if .Values.auto_join_rooms }}
               config["auto_join_rooms"] = [
