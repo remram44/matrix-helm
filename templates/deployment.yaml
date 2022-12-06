@@ -26,28 +26,6 @@ spec:
       {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      initContainers:
-        - name: setup
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default (printf "v%s" .Chart.AppVersion) }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command:
-            - sh
-            - -c
-            - |
-              if [ ! -e /data/homeserver.yaml ]; then
-                # Generate keys and default configuration
-                /start.py generate
-              fi
-          env:
-            - name: SYNAPSE_SERVER_NAME
-              value: "{{ .Values.server_name }}"
-            - name: SYNAPSE_REPORT_STATS
-              value: "no"
-          volumeMounts:
-            - mountPath: /data
-              name: data
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -58,7 +36,7 @@ spec:
             - sh
             - -c
             - |
-              printf '%s' "$1" | python -
+              printf '%s' "$1" | python - || exit 1
 
               # Run synapse
               exec python -m synapse.app.homeserver --config-path /tmp/synapse.yaml
@@ -67,87 +45,69 @@ spec:
               import os
               import yaml
 
-              os.umask(0o077)
-              with open("/data/homeserver.yaml") as fp:
+              # Load configuration from configmap
+              with open("/etc/synapse/config/homeserver.yaml") as fp:
                   config = yaml.safe_load(fp)
 
-              config["database"] = {
-                  "name": "psycopg2",
-                  "args": {
-                      "user": os.environ["PG_USER"],
-                      "password": os.environ["PG_PASSWORD"],
-                      "database": os.environ["PG_DB"],
-                      "host": os.environ["PG_HOST"],
-                      "cp_min": 5,
-                      "cp_max": 10,
-                  },
-              }
-              config["serve_server_wellknown"] = True
-              {{- if (include "matrix.webClientLocation" .) }}
-              config["web_client_location"] = "{{ include "matrix.webClientLocation" . }}"
-              {{- end }}
-              config["public_baseurl"] = {{ .Values.server_public_url | quote }}
-              config["enable_registration"] = {{ if .Values.enable_registration }}True{{ else }}False{{ end }}
-              {{- if .Values.metrics.enabled }}
-              config["enable_metrics"] = True
-              config["listeners"].append({
-                "port": {{ .Values.metrics.port }},
-                "tls": False,
-                "type": "http",
-                "x_forwarded": False,
-                "resources": [{
-                  "names": ["metrics"],
-                  "compress": False,
-                }],
-              })
-              {{- end  }}
-              config["enable_registration_without_verification"] = {{ if .Values.enable_registration_without_verification }}True{{ else }}False{{ end }}
-              {{- if .Values.auto_join_rooms }}
-              config["auto_join_rooms"] = [
-                {{- range .Values.auto_join_rooms }}
-                "{{ . }}",
-                {{- end }}
-              ]
-              {{- end }}
-              {{- if .Values.email.enabled }}
-              config["email"] = {
-                  "smtp_host": "{{ .Values.email.host }}",
-                  "smtp_port": {{ .Values.email.port }},
-                  {{- if .Values.email.user }}
-                  "smtp_user": "{{ .Values.email.user }}",
-                  "smtp_pass": os.environ["SMTP_PASSWORD"],
-                  {{- end }}
-                  "app_name": {{ .Values.app_name | quote }},
-                  "enable_notifs": True,
-                  "client_base_url": config["web_client_location"],
-                  "notif_from": {{ .Values.email.from | quote }},
-              }
-              {{- end }}
-              config["report_stats"] = os.environ.get("SYNAPSE_REPORT_STATS", "").lower() in ("yes", "true", "1")
+              # Set default config
+              with open("/etc/synapse/config/homeserver-defaults.yaml") as fp:
+                  defaults = yaml.safe_load(fp)
+              for k, v in defaults.items():
+                  if k not in config:
+                      config[k] = defaults[k]
 
+              {{- if .Values.postgres.enabled }}
+              # Set postgres config
+              assert config["database"]["name"] == "psycopg2"
+              config["database"]["args"]["user"] = os.environ["PG_USER"]
+              with open("/etc/synapse/postgres-password") as fp:
+                  config["database"]["args"]["password"] = fp.read().strip()
+              config["database"]["args"]["database"] = os.environ["PG_DB"]
+              config["database"]["args"]["host"] = os.environ["PG_HOST"]
+              {{- end }}
+
+              def setConfig(config, key, data):
+                  components = key.split('.')
+                  for component in components[:-1]:
+                      config = config[component]
+                  config[components[-1]] = data
+              {{- range $key, $config := .Values.extraConfig }}
+
+              # Set secrets
+              for key in ('form_secret', 'macaroon_secret_key', 'registration_shared_secret'):
+                  with open(os.path.join('/etc/synapse/secret', key)) as fp:
+                      config[key] = fp.read().strip()
+
+              # Set extra config: {{ $key }}
+              {{- if $config.secret }}
+              with open({{ printf "/etc/synapse/extra/%d/%s" $key $config.secret.key | quote }}) as fp:
+              {{- if $config.secret.yaml }}
+                  data = yaml.safe_load(fp)
+              {{- else }}
+                  data = fp.read().strip()
+              {{- end }}
+              {{- else if $config.configMap }}
+              with open({{ printf "/etc/synapse/extra/%d/%s" $key $config.configMap.key | quote }}) as fp:
+              {{- if $config.configMap.yaml }}
+                  data = yaml.safe_load(fp)
+              {{- else }}
+                  data = fp.read().strip()
+              {{- end }}
+              {{- end }}
+              setConfig(config, {{ $config.key | quote }}, data)
+              {{- end }}
+
+              # Write final config
+              os.umask(0o077)
               with open("/tmp/synapse.yaml", "w") as fp:
                   yaml.dump(config, fp)
           env:
-            - name: SYNAPSE_REPORT_STATS
-              value: {{ if .Values.report_stats }}"yes"{{ else }}"no"{{ end }}
             - name: PG_USER
               value: "{{ .Values.postgres.user }}"
-            - name: PG_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ default (include "postgres.fullname" .Subcharts.postgres) .Values.postgres.secret.name }}"
-                  key: postgres_password
             - name: PG_DB
               value: "{{ .Values.postgres.database }}"
             - name: PG_HOST
               value: "{{ include "postgres.fullname" .Subcharts.postgres }}"
-            {{- if and .Values.email.enabled .Values.email.user }}
-            - name: SMTP_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.email.secret.name | quote }}
-                  key: {{ .Values.email.secret.key | quote }}
-            {{- end }}
           ports:
             - name: http
               containerPort: 8008
@@ -160,6 +120,20 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: data
+            - mountPath: /etc/synapse/config
+              name: config
+            - mountPath: /etc/synapse/secret
+              name: secret
+            {{- if .Values.postgres.enabled }}
+            - mountPath: /etc/synapse/postgres-password
+              name: postgres-password
+              readOnly: true
+              subPath: postgres_password
+            {{- end }}
+            {{- range $key, $config := .Values.extraConfig }}
+            - name: extra-{{ $key }}
+              mountPath: /etc/synapse/extra/{{ $key }}
+            {{- end }}
           livenessProbe:
             httpGet:
               path: /health
@@ -182,6 +156,27 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: "{{ .Values.storage.persistentClaimName | default (include "matrix.fullname" .) }}"
+        - name: config
+          configMap:
+            name: {{ include "matrix.fullname" . }}
+        - name: secret
+          secret:
+            secretName: {{ .Values.secret.name | default (include "matrix.fullname" .) | quote }}
+        {{- if .Values.postgres.enabled }}
+        - name: postgres-password
+          secret:
+            secretName: "{{ default (include "postgres.fullname" .Subcharts.postgres) .Values.postgres.secret.name }}"
+        {{- end }}
+        {{- range $key, $config := .Values.extraConfig }}
+        - name: extra-{{ $key }}
+          {{- if $config.secret }}
+          secret:
+            secretName: {{ $config.secret.name }}
+          {{- else if $config.configMap }}
+          configMap:
+            name: {{ $config.configMap.name }}
+          {{- end }}
+        {{- end }}
         {{- with .Values.extraVolumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

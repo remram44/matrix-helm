@@ -49,16 +49,3 @@ Selector labels
 app.kubernetes.io/name: {{ include "matrix.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
-
-{{/*
-Element location
-*/}}
-{{- define "matrix.webClientLocation" -}}
-{{- if .Values.web_client_location }}
-{{- .Values.web_client_location }}
-{{- else -}}
-  {{- if .Values.element.ingress.enabled -}}
-    http{{ if .Values.element.ingress.enabled }}s{{ end }}://{{ .Values.element.ingress.host }}/
-  {{- end }}
-{{- end }}
-{{- end }}

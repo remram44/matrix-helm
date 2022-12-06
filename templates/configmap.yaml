@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "matrix.fullname" . }}
+  labels:
+    {{- include "matrix.labels" . | nindent 4 }}
+data:
+  log.yaml: |
+    {{- .Values.logConfig | toYaml | nindent 4 }}
+  homeserver-defaults.yaml: |
+    pid_file: /tmp/homeserver.pid
+    log_config: "/etc/synapse/config/log.yaml"
+    signing_key_path: "/etc/synapse/secret/signing.key"
+    media_store_path: /data/media_store
+    serve_server_wellknown: true
+    enable_metrics: true
+    listeners:
+      - port: 8008
+        tls: false
+        type: http
+        x_forwarded: true
+        resources:
+          - names: [client, federation]
+            compress: false
+      - port: 8080
+        resources:
+        - compress: false
+          names:
+          - metrics
+        tls: false
+        type: http
+        x_forwarded: false
+    database:
+      name: psycopg2
+      args:
+        cp_min: 5
+        cp_max: 10
+    email:
+      enable_notifs: false
+    auto_join_rooms: []
+    enable_registration: false
+    enable_registration_without_verification: false
+    trusted_key_servers:
+      - server_name: "matrix.org"
+    report_stats: false
+  homeserver.yaml: |
+    {{- .Values.homeserverConfig | toYaml | nindent 4 }}

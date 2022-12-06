@@ -1,0 +1,65 @@
+{{- if .Values.secret.generate -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "matrix.fullname" . }}-secret
+  labels:
+    {{- include "matrix.labels" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ include "matrix.fullname" . }}-secret
+      initContainers:
+        # Synapse container, generating the expected values
+        - name: generate
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default (printf "v%s" .Chart.AppVersion) }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /data/secret
+              SYNAPSE_SERVER_NAME=example.org SYNAPSE_REPORT_STATS=no /start.py generate || exit 1
+              cp /data/example.org.signing.key /data/secret/signing.key
+              printf '%s' "$1" | python - || exit 1
+            - "--"
+            - |
+              import os
+              import yaml
+
+              with open('/data/homeserver.yaml') as fp:
+                  config = yaml.safe_load(fp)
+
+              for key in ('form_secret', 'macaroon_secret_key', 'registration_shared_secret'):
+                  with open(os.path.join('/data/secret', key), 'w') as fp:
+                      fp.write(config[key])
+          volumeMounts:
+            - mountPath: /data
+              name: data
+      containers:
+        # Upload container, creating the secret in Kubernetes
+        - name: upload
+          image: bitnami/kubectl
+          command:
+            - sh
+            - -c
+            - |
+              if ! kubectl get secret "$SECRET_NAME"; then
+                kubectl create secret generic "$SECRET_NAME" \
+                  --from-file=/data/secret
+              fi
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          env:
+            - name: SECRET_NAME
+              value: {{ .Values.secret.name | default (include "matrix.fullname" .) | quote }}
+          volumeMounts:
+            - mountPath: /data
+              name: data
+      volumes:
+        - name: data
+          emptyDir: {}
+{{- end }}

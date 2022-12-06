@@ -14,35 +14,87 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-server_name: matrix.example.org
-server_public_url: https://synapse.matrix.example.org/
-app_name: "Example Matrix"
-# Default to Element's ingress, if enabled
-web_client_location: ""
-# web_client_location: https://element.matrix.example.org/
+homeserverConfig:
+  # For more information on how to configure Synapse, including a complete accounting of
+  # each option, go to docs/usage/configuration/config_documentation.md or
+  # https://matrix-org.github.io/synapse/latest/usage/configuration/config_documentation.html
 
+  # This should point to your domain
+  server_name: "example.org"
+  public_baseurl: https://matrix.example.org/
+  web_client_location: https://matrix.example.org/
+
+  # Database configuration
+  database:
+    name: psycopg2
+    args:
+      # Overridden if postgres is enabled
+      # user:
+      # password:
+      # database:
+      # host:
+      cp_min: 5
+      cp_max: 10
+
+  # Email configuration
+  email:
+    app_name: Matrix
+    client_base_url: https://matrix.example.org/
+    enable_notifs: false
+    notif_from: Matrix <matrix@example.org>
+
+  # Miscellaneous
+  auto_join_rooms: []
+  enable_registration: false
+  enable_registration_without_verification: false
+  trusted_key_servers:
+    - server_name: "matrix.org"
+  report_stats: false
+
+# Set additional config from secrets or configmaps
+extraConfig: []
+#  - key: email.smtp_pass
+#    secret:
+#      yaml: false # The string will be used directly
+#      name: matrix-email
+#      key: password
+#  - key: auto_join_rooms
+#    configMap:
+#      yaml: true # The string will be loaded as YAML
+#      name: matrix-rooms
+#      key: rooms
+
+logConfig:
+  version: 1
+  disable_existing_loggers: false
+  formatters:
+    precise:
+      format: '%(asctime)s - %(name)s - %(lineno)d - %(levelname)s - %(request)s - %(message)s'
+  handlers:
+    console:
+      class: logging.StreamHandler
+      formatter: precise
+  loggers:
+    synapse.storage.SQL:
+      # beware: increasing this to DEBUG will make synapse log sensitive
+      # information such as access tokens.
+      level: INFO
+  root:
+    level: INFO
+    handlers: [console]
+
+# Secret containing form_secret, macaroon_secret_key,
+# registration_shared_secret, and signing.key
+secret:
+  # If true, a job will be run to create the secret if it doesn't exist
+  generate: true
+  # Override the secret's name whose default is the release name
+  name: ""
+
+# This creates a headless service for metrics collection
 metrics:
   enabled: false
   port: 8080
-
-# Send statistics about Synapse
-report_stats: false
-
-# Registration
-enable_registration: false
-enable_registration_without_verification: false
-
-auto_join_rooms: []
-
-email:
-  enabled: false
-  from: "Example Matrix <matrix-support@example.org>"
-  host: "smtp.example.org"
-  port: 25
-  user: ""
-  secret:
-    name: ""
-    key: "password"
 
 storage:
   create: true
