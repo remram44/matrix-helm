@@ -22,7 +22,7 @@ web_client_location: ""
 # web_client_location: https://element.matrix.example.org/
 
 metrics:
-  enable: false
+  enabled: false
   port: 8080
 
 # Send statistics about Synapse

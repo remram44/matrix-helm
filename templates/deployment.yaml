@@ -88,7 +88,7 @@ spec:
               {{- end }}
               config["public_baseurl"] = {{ .Values.server_public_url | quote }}
               config["enable_registration"] = {{ if .Values.enable_registration }}True{{ else }}False{{ end }}
-              {{- if .Values.metrics.enable }}
+              {{- if .Values.metrics.enabled }}
               config["enable_metrics"] = True
               config["listeners"].append({
                 "port": {{ .Values.metrics.port }},
