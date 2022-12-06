@@ -152,6 +152,11 @@ spec:
             - name: http
               containerPort: 8008
               protocol: TCP
+            {{- if .Values.metrics.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.metrics.port }}
+              protocol: TCP
+            {{- end }}
           volumeMounts:
             - mountPath: /data
               name: data
