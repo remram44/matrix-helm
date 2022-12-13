@@ -69,6 +69,8 @@ spec:
               def setConfig(config, key, data):
                   components = key.split('.')
                   for component in components[:-1]:
+                      if isinstance(config, list):
+                          component = int(component, 10)
                       config = config[component]
                   config[components[-1]] = data
               {{- range $key, $config := .Values.extraConfig }}
