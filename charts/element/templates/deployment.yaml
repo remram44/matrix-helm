@@ -30,11 +30,11 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          env:
-            - name: ELEMENT_BASE_URL
-              value: "{{ .Values.homeserver.base_url }}"
-            - name: ELEMENT_NAME
-              value: "{{ .Values.homeserver.name }}"
+          volumeMounts:
+            - mountPath: /usr/lib/element/config.json
+              name: config
+              subPath: config.json
+              readOnly: true
           ports:
             - name: http
               containerPort: 8080
@@ -61,3 +61,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "element.fullname" . }}

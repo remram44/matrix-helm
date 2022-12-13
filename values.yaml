@@ -155,6 +155,13 @@ tolerations: []
 
 affinity: {}
 
+element:
+  config:
+    default_server_config:
+      m.homeserver:
+        base_url: https://matrix.example.org/
+        server_name: Matrix
+
 postgres:
   enabled: true
   user: matrix
