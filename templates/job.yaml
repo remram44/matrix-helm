@@ -5,6 +5,8 @@ metadata:
   name: {{ include "matrix.fullname" . }}-secret
   labels:
     {{- include "matrix.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
 spec:
   template:
     spec:
