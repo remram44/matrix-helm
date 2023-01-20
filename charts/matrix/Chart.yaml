@@ -11,6 +11,10 @@ appVersion: "1.75.0"
 
 dependencies:
   - name: postgres
+    version: "0.2.*"
+    repository: https://remram44.github.io/matrix-helm
     condition: postgres.enabled
   - name: element
+    version: "0.2.*"
+    repository: https://remram44.github.io/matrix-helm
     condition: element.enabled
