@@ -2,10 +2,14 @@
 
 You can use this Helm chart to deploy Synapse, its backing PostgreSQL database, and the Element-Web frontend.
 
+```
+helm repo add matrix https://remram44.github.io/matrix-helm
+helm install chat matrix/matrix --namespace chat -f values.yaml
+```
+
 For example, to deploy both Synapse and Element at `chat.example.org`, with the domain part being simply `example.org` (e.g. `@user:example.org`, `#room:example.org`):
 
-```
-cat >values.yaml <'END'
+```yaml
 homeserverConfig:
   server_name: example.org
   public_baseurl: https://chat.example.org/
@@ -29,14 +33,11 @@ element:
   ingress:
     enabled: true
     host: chat.example.org
-END
-helm upgrade --install chat --namespace chat -f values.yaml
 ```
 
 You can also use a different domain for Synapse and Element, for example:
 
-```
-cat >values.yaml <'END'
+```yaml
 homeserverConfig:
   server_name: example.org
   public_baseurl: https://synapse.example.org/
@@ -60,8 +61,6 @@ element:
   ingress:
     enabled: true
     host: element.example.org
-END
-helm upgrade --install chat --namespace chat -f values.yaml
 ```
 
 For a list of the settings allowed in `homeserverConfig`, check out [Synapse's own documentation](https://matrix-org.github.io/synapse/latest/usage/configuration/config_documentation.html).
