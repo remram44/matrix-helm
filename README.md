@@ -5,35 +5,63 @@ You can use this Helm chart to deploy Synapse, its backing PostgreSQL database, 
 For example, to deploy both Synapse and Element at `chat.example.org`, with the domain part being simply `example.org` (e.g. `@user:example.org`, `#room:example.org`):
 
 ```
-helm upgrade --install chat --namespace chat \
-    --set server_name=example.org \
-    --set server_public_url=https://chat.example.org/ \
-    --set app_name="Example Chat" \
-    --set ingress.enabled=true \
-    --set ingress.hosts[0]=chat.example.org \
-    --set ingress.tls[0].hosts[0]=chat.example.org \
-    --set element.homeserver.base_url=https://chat.example.org \
-    --set element.homeserver.name="Example Chat" \
-    --set element.ingress.enabled=true \
-    --set element.ingress.host=chat.example.org \
-    --set element.ingress.tls[0].hosts[0]=chat.example.org
+cat >values.yaml <'END'
+homeserverConfig:
+  server_name: example.org
+  public_baseurl: https://chat.example.org/
+  web_client_location: https://chat.example.org/
+  email:
+    app_name: Example Chat
+ingress:
+  enabled: true
+  hosts:
+    - chat.example.org
+  tls:
+    - hosts:
+        - chat.example.org
+        - example.org
+element:
+  config:
+    default_server_config:
+      m.homeserver:
+        base_url: https://chat.example.org
+        server_name: Example Chat
+  ingress:
+    enabled: true
+    host: chat.example.org
+END
+helm upgrade --install chat --namespace chat -f values.yaml
 ```
 
 You can also use a different domain for Synapse and Element, for example:
 
 ```
-helm upgrade --install chat --namespace chat \
-    --set server_name=example.org \
-    --set server_public_url=https://synapse.example.org/ \
-    --set app_name="Example Chat" \
-    --set ingress.enabled=true \
-    --set ingress.hosts[0]=synapse.example.org \
-    --set ingress.tls[0].hosts[0]=synapse.example.org \
-    --set element.homeserver.base_url=https://synapse.example.org \
-    --set element.homeserver.name="Example Chat" \
-    --set element.ingress.enabled=true \
-    --set element.ingress.host=element.example.org \
-    --set element.ingress.tls[0].hosts[0]=element.example.org
+cat >values.yaml <'END'
+homeserverConfig:
+  server_name: example.org
+  public_baseurl: https://synapse.example.org/
+  web_client_location: https://element.example.org/
+  email:
+    app_name: Example Chat
+ingress:
+  enabled: true
+  hosts:
+    - synapse.example.org
+  tls:
+    - hosts:
+        - synapse.example.org
+        - example.org
+element:
+  config:
+    default_server_config:
+      m.homeserver:
+        base_url: https://synapse.example.org
+        server_name: Example Chat
+  ingress:
+    enabled: true
+    host: element.example.org
+END
+helm upgrade --install chat --namespace chat -f values.yaml
 ```
 
-Other settings exist, for example for email, check the `values.yaml` files for the full list.
+For a list of the settings allowed in `homeserverConfig`, check out [Synapse's own documentation](https://matrix-org.github.io/synapse/latest/usage/configuration/config_documentation.html).
