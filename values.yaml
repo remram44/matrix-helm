@@ -156,6 +156,7 @@ tolerations: []
 affinity: {}
 
 element:
+  enabled: true
   config:
     default_server_config:
       m.homeserver:

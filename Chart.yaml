@@ -13,3 +13,4 @@ dependencies:
   - name: postgres
     condition: postgres.enabled
   - name: element
+    condition: element.enabled
