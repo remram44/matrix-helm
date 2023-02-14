@@ -4,7 +4,7 @@ description: A chart for Matrix.org, includes Synapse, PostgreSQL, and Element.
 
 type: application
 
-version: 0.2.2
+version: 1.0.0
 
 # The version of Synapse
 appVersion: "1.77.0"
@@ -15,6 +15,6 @@ dependencies:
     repository: https://remram44.github.io/matrix-helm
     condition: postgres.enabled
   - name: element
-    version: "0.2.*"
+    version: "1.0.*"
     repository: https://remram44.github.io/matrix-helm
     condition: element.enabled
