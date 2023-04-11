@@ -217,6 +217,16 @@ entries:
     version: 0.2.0
   postgres:
   - apiVersion: v2
+    appVersion: "14.7"
+    created: "2023-04-11T14:37:39.916730522Z"
+    description: A chart for PostgreSQL.
+    digest: 2138727843cd2a1167e268a8a2c66021554adbc665e2b1f3dfa32447fede598a
+    name: postgres
+    type: application
+    urls:
+    - https://github.com/remram44/matrix-helm/releases/download/postgres-0.2.2/postgres-0.2.2.tgz
+    version: 0.2.2
+  - apiVersion: v2
     appVersion: "14.6"
     created: "2023-03-28T15:10:00.738734888Z"
     description: A chart for PostgreSQL.
@@ -236,4 +246,4 @@ entries:
     urls:
     - https://github.com/remram44/matrix-helm/releases/download/postgres-0.2.0/postgres-0.2.0.tgz
     version: 0.2.0
-generated: "2023-04-11T14:34:58.195614042Z"
+generated: "2023-04-11T14:37:39.916944922Z"
