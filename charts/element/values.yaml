@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: quay.io/remram44/element
+  repository: ghcr.io/remram44/matrix-helm/element
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
