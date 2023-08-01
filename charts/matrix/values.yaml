@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: matrixdotorg/synapse
+  repository: ghcr.io/matrix-org/synapse
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
