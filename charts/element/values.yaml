@@ -51,8 +51,6 @@ config:
     - "https://scalar-staging.vector.im/_matrix/integrations/v1"
     - "https://scalar-staging.vector.im/api"
     - "https://scalar-staging.riot.im/scalar/api"
-  bug_report_endpoint_url: "https://element.io/bugreports/submit"
-  uisi_autorageshake_app: "element-auto-uisi"
   default_country_code: "GB"
   show_labs_settings: false
   features: {}
@@ -70,6 +68,8 @@ config:
     preferred_domain: "meet.element.io"
   element_call:
     url: "https://call.element.io"
+    participant_limit: 8
+    brand: "Element Call"
   map_style_url: "https://api.maptiler.com/maps/streets/style.json?key=fU3vlMsMn4Jb6dnEIFsx"
 
 ingress:
