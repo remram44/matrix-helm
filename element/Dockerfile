@@ -4,8 +4,8 @@ FROM nginxinc/nginx-unprivileged:${NGINX_VERSION}
 
 USER 0
 
-ARG ELEMENT_VERSION=1.11.39
-ARG ELEMENT_TAR_HASH=348843299d8ce535d3ff03ef643f7648cdae4cd1ca9280771c84d92084f23b4a
+ARG ELEMENT_VERSION=1.11.40
+ARG ELEMENT_TAR_HASH=7e0d0263ee2c52401f6f8f0ea2c5b76fef82aaa1860c1b4986235971f7b8b731
 
 RUN curl -Lo /tmp/element-v${ELEMENT_VERSION}.tar.gz https://github.com/vector-im/element-web/releases/download/v${ELEMENT_VERSION}/element-v${ELEMENT_VERSION}.tar.gz && \
     printf "${ELEMENT_TAR_HASH}  /tmp/element-v${ELEMENT_VERSION}.tar.gz\\n" | sha256sum -c && \
