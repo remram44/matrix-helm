@@ -4,10 +4,10 @@ description: A chart for Matrix.org, includes Synapse, PostgreSQL, and Element.
 
 type: application
 
-version: 1.0.21
+version: 1.0.22
 
 # The version of Synapse
-appVersion: "1.95.1"
+appVersion: "1.96.1"
 
 dependencies:
   - name: postgres
