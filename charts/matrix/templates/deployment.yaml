@@ -62,7 +62,7 @@ spec:
               config["database"]["args"]["user"] = os.environ["PG_USER"]
               with open("/etc/synapse/postgres-password") as fp:
                   config["database"]["args"]["password"] = fp.read().strip()
-              config["database"]["args"]["database"] = os.environ["PG_DB"]
+              config["database"]["args"]["dbname"] = os.environ["PG_DB"]
               config["database"]["args"]["host"] = os.environ["PG_HOST"]
               {{- end }}
 

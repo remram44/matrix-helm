@@ -31,7 +31,7 @@ homeserverConfig:
       # Overridden if postgres is enabled
       # user:
       # password:
-      # database:
+      # dbname:
       # host:
       cp_min: 5
       cp_max: 10
