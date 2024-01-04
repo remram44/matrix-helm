@@ -100,7 +100,7 @@ storage:
   create: true
   # Override the persistentvolumeclaim's name whose default is the release name
   persistentClaimName: ""
-  storageClass: ""
+  storageClass: null
   capacity: 10Gi
 
 podAnnotations: {}
