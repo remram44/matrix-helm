@@ -6,7 +6,9 @@ metadata:
   labels:
     {{- include "postgres.labels" . | nindent 4 }}
 spec:
+  {{- if ne .Values.storage.storageClass nil }}
   storageClassName: {{ .Values.storage.storageClass | quote }}
+  {{- end }}
   accessModes:
     - ReadWriteOnce
   resources:
