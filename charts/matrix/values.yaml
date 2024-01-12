@@ -28,7 +28,7 @@ homeserverConfig:
   database:
     name: psycopg2
     args:
-      # Overridden if postgres is enabled
+      # Overridden if postgresql is enabled
       # user:
       # password:
       # dbname:
@@ -163,7 +163,16 @@ element:
         base_url: https://matrix.example.org/
         server_name: Matrix
 
-postgres:
+postgresql:
   enabled: true
-  user: matrix
-  default_collation: C
+  auth:
+    username: matrix
+    database: matrix
+  primary:
+    initdb:
+      args: --encoding=UTF8
+    extraEnvVars:
+      - name: LC_COLLATE
+        value: C
+      - name: LC_CTYPE
+        value: C
