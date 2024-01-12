@@ -56,11 +56,11 @@ spec:
                   if k not in config:
                       config[k] = defaults[k]
 
-              {{- if .Values.postgres.enabled }}
-              # Set postgres config
+              {{- if .Values.postgresql.enabled }}
+              # Set postgresql config
               assert config["database"]["name"] == "psycopg2"
               config["database"]["args"]["user"] = os.environ["PG_USER"]
-              with open("/etc/synapse/postgres-password") as fp:
+              with open("/etc/synapse/postgresql-password") as fp:
                   config["database"]["args"]["password"] = fp.read().strip()
               config["database"]["args"]["dbname"] = os.environ["PG_DB"]
               config["database"]["args"]["host"] = os.environ["PG_HOST"]
@@ -105,11 +105,11 @@ spec:
                   yaml.dump(config, fp)
           env:
             - name: PG_USER
-              value: "{{ .Values.postgres.user }}"
+              value: "{{ include "postgresql.v1.username" .Subcharts.postgresql }}"
             - name: PG_DB
-              value: "{{ .Values.postgres.database }}"
+              value: "{{ include "postgresql.v1.database" .Subcharts.postgresql }}"
             - name: PG_HOST
-              value: "{{ include "postgres.fullname" .Subcharts.postgres }}"
+              value: "{{ include "postgresql.v1.primary.fullname" .Subcharts.postgresql }}"
           ports:
             - name: http
               containerPort: 8008
@@ -126,11 +126,11 @@ spec:
               name: config
             - mountPath: /etc/synapse/secret
               name: secret
-            {{- if .Values.postgres.enabled }}
-            - mountPath: /etc/synapse/postgres-password
-              name: postgres-password
+            {{- if .Values.postgresql.enabled }}
+            - mountPath: /etc/synapse/postgresql-password
+              name: postgresql-password
               readOnly: true
-              subPath: postgres_password
+              subPath: password
             {{- end }}
             {{- range $key, $config := .Values.extraConfig }}
             - name: extra-{{ $key }}
@@ -164,10 +164,13 @@ spec:
         - name: secret
           secret:
             secretName: {{ .Values.secret.name | default (include "matrix.fullname" .) | quote }}
-        {{- if .Values.postgres.enabled }}
-        - name: postgres-password
+        {{- if .Values.postgresql.enabled }}
+        - name: postgresql-password
           secret:
-            secretName: "{{ default (include "postgres.fullname" .Subcharts.postgres) .Values.postgres.secret.name }}"
+            secretName: "{{ include "postgresql.v1.secretName" .Subcharts.postgresql }}"
+            items:
+              - key: "{{ include "postgresql.v1.userPasswordKey" .Subcharts.postgresql }}"
+                path: password
         {{- end }}
         {{- range $key, $config := .Values.extraConfig }}
         - name: extra-{{ $key }}
