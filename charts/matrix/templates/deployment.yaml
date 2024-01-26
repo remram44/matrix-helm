@@ -103,6 +103,7 @@ spec:
               os.umask(0o077)
               with open("/tmp/synapse.yaml", "w") as fp:
                   yaml.dump(config, fp)
+          {{- if .Values.postgresql.enabled }}
           env:
             - name: PG_USER
               value: "{{ include "postgresql.v1.username" .Subcharts.postgresql }}"
@@ -110,6 +111,7 @@ spec:
               value: "{{ include "postgresql.v1.database" .Subcharts.postgresql }}"
             - name: PG_HOST
               value: "{{ include "postgresql.v1.primary.fullname" .Subcharts.postgresql }}"
+          {{- end }}
           ports:
             - name: http
               containerPort: 8008
