@@ -333,6 +333,25 @@ entries:
     version: 0.2.0
   matrix:
   - apiVersion: v2
+    appVersion: 1.100.0
+    created: "2024-01-31T15:47:27.37701089Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: ^13.2.0
+    - condition: element.enabled
+      name: element
+      repository: https://remram44.github.io/matrix-helm
+      version: ~1.0.0
+    description: A chart for Matrix.org, includes Synapse, PostgreSQL, and Element.
+    digest: afe21fe637e047e789be048e30ca32b621b840fa420d30821a629c32208c723e
+    name: matrix
+    type: application
+    urls:
+    - https://github.com/remram44/matrix-helm/releases/download/matrix-2.0.3/matrix-2.0.3.tgz
+    version: 2.0.3
+  - apiVersion: v2
     appVersion: 1.99.0
     created: "2024-01-26T20:32:54.465296406Z"
     dependencies:
@@ -981,4 +1000,4 @@ entries:
     urls:
     - https://github.com/remram44/matrix-helm/releases/download/postgres-0.2.0/postgres-0.2.0.tgz
     version: 0.2.0
-generated: "2024-01-31T15:35:24.061788641Z"
+generated: "2024-01-31T15:47:27.377262721Z"
