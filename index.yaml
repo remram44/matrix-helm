@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   element:
   - apiVersion: v2
+    appVersion: 1.11.57
+    created: "2024-01-31T15:35:24.061460523Z"
+    description: A chart for Element, the web interface for Matrix.org.
+    digest: 9b7dcf4940da603a3d602c500d13c295f89b577f85bfa19e7aa45ba97905af6b
+    name: element
+    type: application
+    urls:
+    - https://github.com/remram44/matrix-helm/releases/download/element-1.0.30/element-1.0.30.tgz
+    version: 1.0.30
+  - apiVersion: v2
     appVersion: 1.11.55
     created: "2024-01-25T02:47:37.643946563Z"
     description: A chart for Element, the web interface for Matrix.org.
@@ -971,4 +981,4 @@ entries:
     urls:
     - https://github.com/remram44/matrix-helm/releases/download/postgres-0.2.0/postgres-0.2.0.tgz
     version: 0.2.0
-generated: "2024-01-26T20:32:54.465540834Z"
+generated: "2024-01-31T15:35:24.061788641Z"
