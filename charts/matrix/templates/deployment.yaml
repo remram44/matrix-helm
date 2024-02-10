@@ -73,12 +73,12 @@ spec:
                           component = int(component, 10)
                       config = config[component]
                   config[components[-1]] = data
-              {{- range $key, $config := .Values.extraConfig }}
 
               # Set secrets
               for key in ('form_secret', 'macaroon_secret_key', 'registration_shared_secret'):
                   with open(os.path.join('/etc/synapse/secret', key)) as fp:
                       config[key] = fp.read().strip()
+              {{- range $key, $config := .Values.extraConfig }}
 
               # Set extra config: {{ $key }}
               {{- if $config.secret }}
