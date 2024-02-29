@@ -22,6 +22,9 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if ne .Values.priorityClassName nil }}
+      priorityClassName: {{ .Values.priorityClassName | quote }}
+      {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:

@@ -14,6 +14,8 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+priorityClassName: null
+
 podAnnotations: {}
 
 podSecurityContext: {}
