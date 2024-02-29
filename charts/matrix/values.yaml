@@ -103,6 +103,8 @@ storage:
   storageClass: null
   capacity: 10Gi
 
+priorityClassName: null
+
 podAnnotations: {}
 
 podSecurityContext:
