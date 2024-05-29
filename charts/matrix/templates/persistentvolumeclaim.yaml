@@ -19,5 +19,5 @@ spec:
   {{- if ne .Values.storage.hostPath nil }}
   hostPath:
     path: {{ .Values.storage.hostPath }}
-  {{- if ne .Values.storage.hostPath nil }}
+  {{- end }}
 {{- end }}
