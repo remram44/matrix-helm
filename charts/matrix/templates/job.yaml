@@ -41,6 +41,8 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: data
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
       containers:
         # Upload container, creating the secret in Kubernetes
         - name: upload
@@ -61,6 +63,8 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: data
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
       volumes:
         - name: data
           emptyDir: {}
