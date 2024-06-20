@@ -61,6 +61,8 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: data
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
       volumes:
         - name: data
           emptyDir: {}
