@@ -1,6 +1,6 @@
 ARG NGINX_VERSION=1.27.0
 
-FROM nginxinc/nginx-unprivileged:${NGINX_VERSION}
+FROM quay.io/nginx/nginx-unprivileged:${NGINX_VERSION}
 
 USER 0
 
