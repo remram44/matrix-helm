@@ -4,8 +4,8 @@ FROM quay.io/nginx/nginx-unprivileged:${NGINX_VERSION}
 
 USER 0
 
-ARG ELEMENT_VERSION=1.11.74
-ARG ELEMENT_TAR_HASH=a12e4185abd430aeddf86f6fe376e47a5ab27a7ef8dfb6c4203b4c9bc0382ce8
+ARG ELEMENT_VERSION=1.11.75
+ARG ELEMENT_TAR_HASH=eeefbabff0b4d9fcb5a4e70f1dc1d7225a915c5e4a1b0436a31110a80e13fa58
 
 RUN curl -Lo /tmp/element-v${ELEMENT_VERSION}.tar.gz https://github.com/vector-im/element-web/releases/download/v${ELEMENT_VERSION}/element-v${ELEMENT_VERSION}.tar.gz && \
     printf "${ELEMENT_TAR_HASH}  /tmp/element-v${ELEMENT_VERSION}.tar.gz\\n" | sha256sum -c && \
