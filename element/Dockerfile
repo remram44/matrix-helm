@@ -1,11 +1,11 @@
-ARG NGINX_VERSION=1.27.0
+ARG NGINX_VERSION=1.27.1
 
 FROM quay.io/nginx/nginx-unprivileged:${NGINX_VERSION}
 
 USER 0
 
-ARG ELEMENT_VERSION=1.11.76
-ARG ELEMENT_TAR_HASH=6d7274f5db91c956cb7958550c4f30ba46ce909949824b05cfe2af0769f6dcdc
+ARG ELEMENT_VERSION=1.11.77
+ARG ELEMENT_TAR_HASH=dcfc994b0d16915f74cbb52a4f8331dac2a6b3b5e08c0188322041c0e176645e
 
 RUN curl -Lo /tmp/element-v${ELEMENT_VERSION}.tar.gz https://github.com/vector-im/element-web/releases/download/v${ELEMENT_VERSION}/element-v${ELEMENT_VERSION}.tar.gz && \
     printf "${ELEMENT_TAR_HASH}  /tmp/element-v${ELEMENT_VERSION}.tar.gz\\n" | sha256sum -c && \
