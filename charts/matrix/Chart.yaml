@@ -4,14 +4,14 @@ description: A chart for Matrix.org, includes Synapse, PostgreSQL, and Element.
 
 type: application
 
-version: 2.2.11
+version: 2.3.0
 
 # The version of Synapse
 appVersion: "1.119.0"
 
 dependencies:
   - name: postgresql
-    version: "^13.2.0"
+    version: "^15.5.38"
     repository: oci://registry-1.docker.io/bitnamicharts
     condition: postgresql.enabled
   - name: element
