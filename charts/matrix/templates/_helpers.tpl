@@ -35,6 +35,9 @@ Common labels
 */}}
 {{- define "matrix.labels" -}}
 helm.sh/chart: {{ include "matrix.chart" . }}
+{{- range $key, $val := .Values.additionalLabels }}
+{{ $key }}: {{ $val | quote }}
+{{- end }}
 {{ include "matrix.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}

@@ -13,6 +13,7 @@ image:
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+additionalLabels: {}
 
 homeserverConfig:
   # For more information on how to configure Synapse, including a complete accounting of
