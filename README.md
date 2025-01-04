@@ -64,7 +64,3 @@ element:
 ```
 
 For a list of the settings allowed in `homeserverConfig`, check out [Synapse's own documentation](https://matrix-org.github.io/synapse/latest/usage/configuration/config_documentation.html).
-
-# Why do you use a custom Element image?
-
-The official Element image, [`docker.io/vectorim/element-web`](https://hub.docker.com/r/vectorim/element-web), runs as root and is only built for a few architectures. The [image](https://github.com/users/remram44/packages/container/package/matrix-helm%2Felement) in this repo (`element/`) is built from [`docker.io/nginxinc/nginx-unprivileged`](https://hub.docker.com/r/nginxinc/nginx-unprivileged).
