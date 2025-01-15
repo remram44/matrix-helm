@@ -31,10 +31,13 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default (printf "v%s" .Chart.AppVersion) }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: ELEMENT_WEB_PORT
+              value: "8080"
           volumeMounts:
-            - mountPath: /usr/lib/element/config.json
+            - mountPath: /app/config.json
               name: config
               subPath: config.json
               readOnly: true
