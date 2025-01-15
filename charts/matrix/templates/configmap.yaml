@@ -12,6 +12,8 @@ data:
     log_config: "/etc/synapse/config/log.yaml"
     signing_key_path: "/etc/synapse/secret/signing.key"
     media_store_path: /data/media_store
+    macaroon_secret_key_path: "/etc/synapse/secret/macaroon_secret_key"
+    registration_shared_secret_path: "/etc/synapse/secret/registration_shared_secret"
     serve_server_wellknown: true
     enable_metrics: true
     listeners:

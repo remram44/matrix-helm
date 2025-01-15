@@ -78,7 +78,7 @@ spec:
                   config[components[-1]] = data
 
               # Set secrets
-              for key in ('form_secret', 'macaroon_secret_key', 'registration_shared_secret'):
+              for key in ('form_secret',):
                   with open(os.path.join('/etc/synapse/secret', key)) as fp:
                       config[key] = fp.read().strip()
               {{- range $key, $config := .Values.extraConfig }}
