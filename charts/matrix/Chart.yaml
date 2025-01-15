@@ -7,7 +7,7 @@ type: application
 version: 2.3.5
 
 # The version of Synapse
-appVersion: "1.121.1"
+appVersion: "1.122.0"
 
 dependencies:
   - name: postgresql
