@@ -63,4 +63,4 @@ element:
     host: element.example.org
 ```
 
-For a list of the settings allowed in `homeserverConfig`, check out [Synapse's own documentation](https://matrix-org.github.io/synapse/latest/usage/configuration/config_documentation.html).
+For a list of the settings allowed in `homeserverConfig`, check out [Synapse's own documentation](https://element-hq.github.io/synapse/latest/usage/configuration/config_documentation.html).
