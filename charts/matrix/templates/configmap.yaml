@@ -14,6 +14,7 @@ data:
     media_store_path: /data/media_store
     macaroon_secret_key_path: "/etc/synapse/secret/macaroon_secret_key"
     registration_shared_secret_path: "/etc/synapse/secret/registration_shared_secret"
+    form_secret_path: "/etc/synapse/secret/form_secret"
     serve_server_wellknown: true
     enable_metrics: true
     listeners:
