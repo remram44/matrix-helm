@@ -44,6 +44,12 @@ homeserverConfig:
     enable_notifs: false
     notif_from: Matrix <matrix@example.org>
 
+  # https://element-hq.github.io/synapse/latest/usage/configuration/config_documentation.html#room_list_publication_rules
+  room_list_publication_rules: [] # Default deny
+    # - action: "allow"
+    # - user_id: "@bad_user:example.com"
+    #   action: deny
+
   # Miscellaneous
   auto_join_rooms: []
   enable_registration: false
