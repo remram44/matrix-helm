@@ -93,10 +93,12 @@ logConfig:
 # Secret containing form_secret, macaroon_secret_key,
 # registration_shared_secret, and signing.key
 secret:
-  # If true, a job will be run to create the secret if it doesn't exist
-  generate: true
   # Override the secret's name whose default is the release name
   name: ""
+  # If true, a job will be run to create the secret if it doesn't exist
+  generate: true
+  # Additional annotations for the job creating the secret (if generate is true)
+  jobAnnotations: {}
 
 # This creates a headless service for metrics collection
 metrics:

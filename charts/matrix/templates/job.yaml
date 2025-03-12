@@ -7,6 +7,9 @@ metadata:
     {{- include "matrix.labels" . | nindent 4 }}
   annotations:
     helm.sh/hook: post-install,post-upgrade
+    {{- range $key, $val := .Values.secret.jobAnnotations }}
+    {{ $key }}: {{ $val | quote }}
+    {{- end }}
 spec:
   template:
     spec:
