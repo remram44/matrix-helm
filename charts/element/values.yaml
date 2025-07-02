@@ -53,7 +53,6 @@ config:
     - "https://scalar.vector.im/api"
     - "https://scalar-staging.vector.im/_matrix/integrations/v1"
     - "https://scalar-staging.vector.im/api"
-    - "https://scalar-staging.riot.im/scalar/api"
   default_widget_container_height: 280
   default_country_code: "GB"
   show_labs_settings: false
