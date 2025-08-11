@@ -4,7 +4,7 @@ description: A chart for Element, the web interface for Matrix.org.
 
 type: application
 
-version: "1.1.16"
+version: "1.1.17"
 
 # The version of Element
-appVersion: "1.11.106"
+appVersion: "1.11.108"
