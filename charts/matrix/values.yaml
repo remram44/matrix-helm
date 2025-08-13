@@ -133,6 +133,7 @@ service:
 
 ingress:
   enabled: false
+  expose_well_known: true
   className: ""
   pathType: Prefix
   annotations: {}
