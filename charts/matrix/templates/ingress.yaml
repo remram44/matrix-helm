@@ -70,7 +70,8 @@ spec:
               serviceName: {{ $fullName }}
               servicePort: {{ $svcPort }}
               {{- end }}
-          - path: /.well-known
+          {{- if .Values.ingress.expose_well_known -}}
+          - path: /.well-known/matrix
             {{- if semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion }}
             pathType: {{ $pathType }}
             {{- end }}
@@ -84,5 +85,6 @@ spec:
               serviceName: {{ $fullName }}
               servicePort: {{ $svcPort }}
               {{- end }}
+          {{- end }}
     {{- end }}
 {{- end }}
