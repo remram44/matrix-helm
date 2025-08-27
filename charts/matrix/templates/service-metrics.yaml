@@ -5,6 +5,7 @@ metadata:
   name: {{ include "matrix.fullname" . }}-metrics
   labels:
     {{- include "matrix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: metrics
 spec:
   type: ClusterIP
   clusterIP: None
