@@ -2,6 +2,7 @@
 {{- $fullName := include "matrix.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
 {{- $pathType := .Values.ingress.pathType -}}
+{{- $exposeWellKnown := .Values.ingress.exposeWellKnown -}}
 {{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
   {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
@@ -70,7 +71,8 @@ spec:
               serviceName: {{ $fullName }}
               servicePort: {{ $svcPort }}
               {{- end }}
-          - path: /.well-known
+          {{- if $exposeWellKnown }}
+          - path: /.well-known/matrix
             {{- if semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion }}
             pathType: {{ $pathType }}
             {{- end }}
@@ -84,5 +86,6 @@ spec:
               serviceName: {{ $fullName }}
               servicePort: {{ $svcPort }}
               {{- end }}
+          {{- end }}
     {{- end }}
 {{- end }}
