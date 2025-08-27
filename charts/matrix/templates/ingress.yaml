@@ -70,7 +70,7 @@ spec:
               serviceName: {{ $fullName }}
               servicePort: {{ $svcPort }}
               {{- end }}
-          {{- if .Values.ingress.exposeWellKnown -}}
+          {{- if .Values.ingress.exposeWellKnown }}
           - path: /.well-known/matrix
             {{- if semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion }}
             pathType: {{ $pathType }}
