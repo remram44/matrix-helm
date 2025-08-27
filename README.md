@@ -72,7 +72,7 @@ For a list of the settings allowed in `homeserverConfig`, check out [Synapse's o
 
 ### path /.well-known/matrix cannot be used with pathType Prefix
 
-If you use DNS records for federation, you can set `ingress.expose_well_known` to `false`.
+If you use DNS records for federation, you can set `ingress.exposeWellKnown` to `false`.
 Otherwise you need to relax to ingress-nginx controller validation by setting `controller.config.strict-validate-path-type` to `"false"`.
 See: https://github.com/kubernetes/ingress-nginx/issues/11176
 
