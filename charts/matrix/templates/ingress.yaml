@@ -1,8 +1,5 @@
 {{- if .Values.ingress.enabled -}}
-{{- $fullName := include "matrix.fullname" . -}}
-{{- $svcPort := .Values.service.port -}}
-{{- $pathType := .Values.ingress.pathType -}}
-{{- $exposeWellKnown := .Values.ingress.exposeWellKnown -}}
+{{- $outer := . -}}
 {{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
   {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
@@ -17,7 +14,7 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ $fullName }}
+  name: {{ include "matrix.fullname" . }}
   labels:
     {{- include "matrix.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
@@ -40,52 +37,55 @@ spec:
   {{- end }}
   rules:
     {{- range .Values.ingress.hosts }}
-    - host: {{ . | quote }}
+    {{- $host := . -}}
+    {{- with $outer }}
+    - host: {{ $host | quote }}
       http:
         paths:
           - path: /_matrix
             {{- if semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion }}
-            pathType: {{ $pathType }}
+            pathType: {{ .Values.ingress.pathType }}
             {{- end }}
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
-                name: {{ $fullName }}
+                name: {{ include "matrix.fullname" . }}
                 port:
-                  number: {{ $svcPort }}
+                  number: {{ .Values.service.port }}
               {{- else }}
-              serviceName: {{ $fullName }}
-              servicePort: {{ $svcPort }}
+              serviceName: {{ include "matrix.fullname" . }}
+              servicePort: {{ .Values.service.port }}
               {{- end }}
           - path: /_synapse
             {{- if semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion }}
-            pathType: {{ $pathType }}
+            pathType: {{ .Values.ingress.pathType }}
             {{- end }}
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
-                name: {{ $fullName }}
+                name: {{ include "matrix.fullname" . }}
                 port:
-                  number: {{ $svcPort }}
+                  number: {{ .Values.service.port }}
               {{- else }}
-              serviceName: {{ $fullName }}
-              servicePort: {{ $svcPort }}
+              serviceName: {{ include "matrix.fullname" . }}
+              servicePort: {{ .Values.service.port}}
               {{- end }}
-          {{- if $exposeWellKnown }}
+          {{- if .Values.ingress.exposeWellKnown }}
           - path: /.well-known/matrix
             {{- if semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion }}
-            pathType: {{ $pathType }}
+            pathType: {{ .Values.ingress.pathType }}
             {{- end }}
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
-                name: {{ $fullName }}
+                name: {{ include "matrix.fullname" . }}
                 port:
-                  number: {{ $svcPort }}
+                  number: {{ .Values.service.port }}
               {{- else }}
-              serviceName: {{ $fullName }}
-              servicePort: {{ $svcPort }}
+              serviceName: {{ include "matrix.fullname" . }}
+              servicePort: {{ .Values.service.port }}
               {{- end }}
           {{- end }}
+    {{- end -}}
     {{- end }}
 {{- end }}
