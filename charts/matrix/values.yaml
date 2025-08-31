@@ -30,10 +30,12 @@ homeserverConfig:
     name: psycopg2
     args:
       # Overridden if postgresql is enabled
+      # host:
+      # dbname:
       # user:
       # password:
-      # dbname:
-      # host:
+      #  OR (in combination with extraVolumes & extraVolumeMounts)
+      # passfile:
       cp_min: 5
       cp_max: 10
 
