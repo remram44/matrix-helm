@@ -63,7 +63,7 @@ element:
     host: element.example.org
 ```
 
-Synapse can directly be hosted on your domain (e.g. `example.org`) as well. It just exposes `/_matrix`, `/_synapse` and optionally `/.well-known/matrix`.
+Synapse can be hosted directly on your root domain (e.g. `example.org`) as well. It just exposes `/_matrix`, `/_synapse` and optionally `/.well-known/matrix`.
 If Synapse is hosted on a subdomain (e.g. `synapse.example.org`) and you want to use federation via `.well-known`, make sure `/.well-known/matrix` is available on your root domain (e.g. `example.org`) - for example by deploying an additional Ingress.
 
 For a list of the settings allowed in `homeserverConfig`, check out [Synapse's own documentation](https://element-hq.github.io/synapse/latest/usage/configuration/config_documentation.html).
@@ -73,7 +73,7 @@ For a list of the settings allowed in `homeserverConfig`, check out [Synapse's o
 ### path /.well-known/matrix cannot be used with pathType Prefix
 
 If you use DNS records for federation, you can set `ingress.exposeWellKnown` to `false`.
-Otherwise you need to relax to ingress-nginx controller validation by setting `controller.config.strict-validate-path-type` to `"false"`.
+Otherwise you need to relax the ingress-nginx controller validation by setting `controller.config.strict-validate-path-type` to `"false"`.
 See: https://github.com/kubernetes/ingress-nginx/issues/11176
 
 ### matrix-federation://matrix.org/\_matrix/federation/...: HttpResponseException('401: Unauthorized')

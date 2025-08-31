@@ -136,6 +136,9 @@ spec:
             - name: extra-{{ $key }}
               mountPath: /etc/synapse/extra/{{ $key }}
             {{- end }}
+            {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           livenessProbe:
             httpGet:
               path: /health
