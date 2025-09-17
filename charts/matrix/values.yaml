@@ -193,3 +193,5 @@ postgresql:
         value: C
       - name: LC_CTYPE
         value: C
+  image:
+    repository: bitnamilegacy/postgresql
