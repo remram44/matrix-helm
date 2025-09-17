@@ -49,7 +49,7 @@ spec:
       containers:
         # Upload container, creating the secret in Kubernetes
         - name: upload
-          image: bitnami/kubectl
+          image: bitnamilegacy/kubectl:1.33.4
           command:
             - sh
             - -c
