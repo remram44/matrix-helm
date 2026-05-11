@@ -38,4 +38,4 @@ jobs:
 
       - name: Push charts to GitHub Container Registry
         run: |
-          find .cr-release-packages -type f -print0 | xargs -t -0 -r -I{} helm push {} oci://ghcr.io/${{ github.repository }}
+          find .cr-release-packages -type f -print0 | xargs -t -0 -r -I{} helm push {} oci://ghcr.io/${{ github.repository }}/charts
