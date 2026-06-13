@@ -8,8 +8,10 @@ metadata:
   annotations:
     helm.sh/resource-policy: keep
 spec:
-  {{- if ne .Values.storage.storageClass nil }}
-  storageClassName: {{ .Values.storage.storageClass | quote }}
+  {{- $sc := .Values.storage.storageClass }}
+  {{- if eq $sc nil }}{{ $sc = .Values.global.storageClass }}{{ end }}
+  {{- if ne $sc nil }}
+  storageClassName: {{ $sc | quote }}
   {{- end }}
   accessModes:
     - ReadWriteOnce

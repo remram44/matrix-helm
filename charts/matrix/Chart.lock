@@ -1,0 +1,6 @@
+dependencies:
+- name: element
+  repository: oci://ghcr.io/remram44/matrix-helm/charts
+  version: 1.2.17
+digest: sha256:cc1349a0743dcae08d9ed9f1103068f83b688708bfa96fd2400335449f5c1aab
+generated: "2026-05-23T12:49:05.904190159-04:00"
