@@ -104,11 +104,11 @@ spec:
           {{- if .Values.postgresql.enabled }}
           env:
             - name: PG_USER
-              value: "{{ include "postgresql.v1.username" .Subcharts.postgresql }}"
+              value: "{{ .Values.postgresql.auth.username }}"
             - name: PG_DB
-              value: "{{ include "postgresql.v1.database" .Subcharts.postgresql }}"
+              value: "{{ .Values.postgresql.auth.database }}"
             - name: PG_HOST
-              value: "{{ include "postgresql.v1.primary.fullname" .Subcharts.postgresql }}"
+              value: "{{ include "matrix.postgresql.fullname" . }}"
           {{- end }}
           ports:
             - name: http
@@ -170,9 +170,9 @@ spec:
         {{- if .Values.postgresql.enabled }}
         - name: postgresql-password
           secret:
-            secretName: "{{ include "postgresql.v1.secretName" .Subcharts.postgresql }}"
+            secretName: "{{ include "matrix.postgresql.secretName" . }}"
             items:
-              - key: "{{ include "postgresql.v1.userPasswordKey" .Subcharts.postgresql }}"
+              - key: password
                 path: password
         {{- end }}
         {{- range $key, $config := .Values.extraConfig }}

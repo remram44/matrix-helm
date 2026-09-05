@@ -2,6 +2,15 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# Values under `global:` are automatically propagated to subcharts by Helm.
+global:
+  # Default storage class for any PVC in this chart (synapse data, postgresql
+  # data, and subcharts that honor global.storageClass). Per-component
+  # storageClass values, when explicitly set, take precedence.
+  # null  -> omit storageClassName (cluster default)
+  # ""    -> explicit empty (no storage class)
+  storageClass: null
+
 replicaCount: 1
 
 image:
@@ -182,16 +191,39 @@ element:
 
 postgresql:
   enabled: true
+  image:
+    repository: docker.io/library/postgres
+    tag: "18.4-trixie"
+    pullPolicy: IfNotPresent
+  # Compatibility mode for releases migrating off the Bitnami postgresql subchart.
+  # When enabled, the StatefulSet mounts the PVC at /bitnami/postgresql, sets
+  # PGDATA to /bitnami/postgresql/data, and runs as uid 1001 — matching the
+  # on-disk layout Bitnami used. Combined with the deterministic PVC name
+  # (data-<release>-postgresql-0), this lets the new StatefulSet adopt the
+  # existing PVC from a Bitnami release with no data migration.
+  #
+  # IMPORTANT: also pin image.tag to the PostgreSQL major version your Bitnami
+  # chart was shipping (Bitnami postgresql 15.x ships PG 17), e.g. "17-trixie".
+  # PG 18 will refuse to start against a PG 17 data directory.
+  compat:
+    bitnami: false
   auth:
     username: matrix
     database: matrix
-  primary:
-    initdb:
-      args: --encoding=UTF8
-    extraEnvVars:
-      - name: LC_COLLATE
-        value: C
-      - name: LC_CTYPE
-        value: C
-  image:
-    repository: bitnamilegacy/postgresql
+    # If set, this secret must contain a "password" key. Otherwise a secret is
+    # generated on first install and reused on upgrades via lookup.
+    existingSecret: ""
+  storage:
+    storageClass: null
+    capacity: 10Gi
+  # Passed to initdb on first start only. C collation matters for Synapse.
+  initdbArgs: "--encoding=UTF8 --lc-collate=C --lc-ctype=C"
+  resources: {}
+  podSecurityContext:
+    fsGroup: 999
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 999
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
