@@ -52,3 +52,17 @@ Selector labels
 app.kubernetes.io/name: {{ include "matrix.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{/*
+PostgreSQL resource name (StatefulSet, Service, generated Secret).
+*/}}
+{{- define "matrix.postgresql.fullname" -}}
+{{- printf "%s-postgresql" (include "matrix.fullname" .) | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Name of the Secret holding the postgres password. Honors auth.existingSecret.
+*/}}
+{{- define "matrix.postgresql.secretName" -}}
+{{- .Values.postgresql.auth.existingSecret | default (include "matrix.postgresql.fullname" .) }}
+{{- end }}

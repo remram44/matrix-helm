@@ -1,0 +1,109 @@
+{{- if .Values.postgresql.enabled }}
+{{- $compat := .Values.postgresql.compat.bitnami -}}
+{{- $mountPath := ternary "/bitnami/postgresql" "/var/lib/postgresql/data" $compat -}}
+{{- $pgdata := ternary "/bitnami/postgresql/data" "/var/lib/postgresql/data/pgdata" $compat -}}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "matrix.postgresql.fullname" . }}
+  labels:
+    {{- include "matrix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postgresql
+spec:
+  serviceName: {{ include "matrix.postgresql.fullname" . }}
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "matrix.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: postgresql
+  template:
+    metadata:
+      labels:
+        {{- include "matrix.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: postgresql
+    spec:
+      securityContext:
+        {{- if $compat }}
+        fsGroup: 1001
+        {{- else }}
+        {{- toYaml .Values.postgresql.podSecurityContext | nindent 8 }}
+        {{- end }}
+      containers:
+        - name: postgresql
+          image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
+          imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
+          securityContext:
+            {{- if $compat }}
+            runAsNonRoot: true
+            runAsUser: 1001
+            {{- else }}
+            {{- toYaml .Values.postgresql.securityContext | nindent 12 }}
+            {{- end }}
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.postgresql.auth.username | quote }}
+            - name: POSTGRES_DB
+              value: {{ .Values.postgresql.auth.database | quote }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "matrix.postgresql.secretName" . }}
+                  key: password
+            - name: POSTGRES_INITDB_ARGS
+              value: {{ .Values.postgresql.initdbArgs | quote }}
+            - name: PGDATA
+              value: {{ $pgdata | quote }}
+          ports:
+            - name: postgresql
+              containerPort: 5432
+          volumeMounts:
+            - name: data
+              mountPath: {{ $mountPath | quote }}
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - {{ .Values.postgresql.auth.username | quote }}
+                - -d
+                - {{ .Values.postgresql.auth.database | quote }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - {{ .Values.postgresql.auth.username | quote }}
+                - -d
+                - {{ .Values.postgresql.auth.database | quote }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.postgresql.resources | nindent 12 }}
+      {{- with .Values.postgresql.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.postgresql.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.postgresql.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        {{- $sc := .Values.postgresql.storage.storageClass }}
+        {{- if eq $sc nil }}{{ $sc = .Values.global.storageClass }}{{ end }}
+        {{- if ne $sc nil }}
+        storageClassName: {{ $sc | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.postgresql.storage.capacity }}
+{{- end }}
